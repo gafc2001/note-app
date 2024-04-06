@@ -20,7 +20,10 @@ public class Note {
     private User user;
     private String text;
 
-    @ManyToMany
+    @Column(columnDefinition = "bit DEFAULT 1")
+    private Boolean isActive;
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "note_tags",
             joinColumns = @JoinColumn(name = "tag_id"),

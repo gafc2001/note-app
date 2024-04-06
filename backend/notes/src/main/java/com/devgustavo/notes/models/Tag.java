@@ -1,5 +1,6 @@
 package com.devgustavo.notes.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,9 +14,11 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String tag;
+    @Column(unique = true)
+    private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Note> notes;
 
 }
