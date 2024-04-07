@@ -29,7 +29,6 @@ export const ListNotes = ({active}) => {
                 {tags.map( (tag,ind) => 
                     <Badge className="cursor" key={ind} bg={filters.includes(tag.id)?"primary":"secondary"} onClick={() => handleFilterClick(tag.id)}>{tag.name}</Badge>   
                 )}
-                {console.log(filters)}
                 <Badge className="cursor" bg={filters.includes(0)?"primary":"secondary"} onClick={() => handleFilterClick(0)}>Todos</Badge>   
             </div>
             <div className='p-4 notes-container'>

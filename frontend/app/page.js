@@ -1,14 +1,14 @@
 import {Notes} from "./components/Notes";
 
 const getNotes = async () => {
-  const response = await fetch(`http://localhost:8080/api/v1/notes`,{
+  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/notes`,{
     cache:"no-cache"
   });
   return response.json();
 }
 
 const getTags = async() => {
-  const response = await fetch(`http://localhost:8080/api/v1/tags`,{
+  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/tags`,{
     cache:"no-cache"
   });
 
