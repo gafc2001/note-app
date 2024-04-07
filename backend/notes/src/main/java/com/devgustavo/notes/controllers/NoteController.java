@@ -1,9 +1,9 @@
 package com.devgustavo.notes.controllers;
 
 import com.devgustavo.notes.dto.NoteDto;
+import com.devgustavo.notes.dto.NoteResponseDto;
+import com.devgustavo.notes.dto.ResponseHttp;
 import com.devgustavo.notes.models.Note;
-import com.devgustavo.notes.models.Tag;
-import com.devgustavo.notes.repositories.INoteRepository;
 import com.devgustavo.notes.services.NoteService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -19,19 +19,41 @@ public class NoteController extends AbstractV1Controller{
     }
 
     @GetMapping("notes")
-    public List<Note> getNotes(){
+    public List<NoteResponseDto> getNotes(){
         return noteService.getNotes();
     }
 
     @PostMapping("notes")
-    public Note saveNote(@Valid  @RequestBody NoteDto noteDto){
-        return noteService.saveNote(noteDto);
+    public ResponseHttp saveNote(@Valid  @RequestBody NoteDto noteDto){
+        Note note = noteService.saveNote(noteDto);
+        ResponseHttp response = new ResponseHttp();
+        response.setData(note);
+        return response;
     }
 
-    @PutMapping("notes/{id}")
+
+
+    @PostMapping("notes/{id}")
     public Note updateNoteText(@PathVariable("id") Long id,@RequestBody Note note){
         return noteService.updateNoteText(id,note);
     }
+
+    @PostMapping("notes/{id}/delete")
+    public ResponseHttp deleteNoteById(@PathVariable("id") Long id){
+        noteService.deleteNoteById(id);
+        ResponseHttp response = new ResponseHttp();
+        response.setMessage("Note deleted");
+        return response;
+    }
+
+    @PostMapping("notes/{id}/archive")
+    public ResponseHttp archiveNoteById(@PathVariable("id") Long id){
+        noteService.archiveNoteById(id);
+        ResponseHttp response = new ResponseHttp();
+        response.setMessage("Note updated");
+        return response;
+    }
+
 
 
 }
