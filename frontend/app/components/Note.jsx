@@ -7,6 +7,9 @@ export const Note = ({note}) => {
 
     const {setModal,setNotes} = useContext(AppContext);
 
+
+
+
     const handleEdit = () => {
         setModal({
             title : "Edit note",
@@ -38,6 +41,14 @@ export const Note = ({note}) => {
     return(
         <div>
             <div className='note-item mb-2 position-relative' style={{backgroundColor : note.color}}>
+                <div className='d-flex gap-1 mb-2'>
+                    {note.tags.map( (tag,ind) => 
+                        <span className='tag-note' key={ind}>{tag.name}</span>
+                    )}
+                </div>
+                <div>
+                    {note.text}
+                </div>
                 <DropdownButton id="dropdown-basic-button" title="" size="sm" className="note-options" variant="dark">
                     {note.isActive 
                     ?<>
@@ -47,7 +58,6 @@ export const Note = ({note}) => {
                     </>
                     :<Dropdown.Item onClick={() => handleArchive(note.id)}>📤Unarchive</Dropdown.Item>}
                 </DropdownButton>
-                {note.text}
             </div>
         </div>
     )

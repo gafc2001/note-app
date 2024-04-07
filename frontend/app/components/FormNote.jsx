@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import {Form,Row,Col,Button} from 'react-bootstrap';
 import { httpClient } from '../services/httpClient';
 import { useRouter } from 'next/router';
-import { deleteNoteTag } from '../services/notes';
+import { addTagService, deleteNoteTag, updateNote } from '../services/notes';
 import { AppContext } from '../context/AppContext';
 
 
@@ -18,10 +18,25 @@ export const FormNote = ({data = initForm}) => {
     const [validated,setValidated] = useState(false);
     const [tagsListOpen,setTagsListOpen] = useState(false);
 
-    const {tags,setModal,setNotes,setTags} = useContext(AppContext);
+    const {tags,setModal,setNotes,setTags,notes} = useContext(AppContext);
 
+
+    const addTag = async (tag) => {
+        if(!!form.id){
+            await addTagService(form.id,tag);
+            setNotes( prev => {
+                const index = prev.findIndex( n => n.id === form.id);
+                prev[index].tags = [
+                    ...prev[index].tags,
+                    tag
+                ]
+                return [...prev];
+            })
+        }
+    }
     const handleChange = (name,value)=> {
         if(name === "tags"){
+            addTag(value);
             value = [
                 ...form.tags,
                 value,
@@ -48,10 +63,21 @@ export const FormNote = ({data = initForm}) => {
             search : "",
         })
     },[form.tags])
+    useEffect(() => {
+        console.log(notes[0]);
+    },[notes])
 
     const handleRemoveTag = async (tag) => {
         if(!!form.id){
-            const response = deleteNoteTag();
+            await deleteNoteTag(form.id,tag.id);
+            setNotes( prev => {
+                const index = prev.findIndex( n => n.id === form.id);
+                prev[index] = {
+                    ...prev[index],
+                    tags : form.tags.filter( tagI => tag.name !== tagI.name)
+                }
+                return prev;
+            })
         }
         setForm({
             ...form,
@@ -59,12 +85,28 @@ export const FormNote = ({data = initForm}) => {
         })
         
     }
-
     const handleSubmit = async e => {
         e.preventDefault();
         e.stopPropagation();
         setValidated(true);
         if (e.target.checkValidity() === false) {
+            return;
+        }
+        if(!!form.id){
+            await updateNote(form.id,form);
+            setNotes( prev => {
+                const index = prev.findIndex(n => n.id === form.id);
+                prev[index] = form;
+                return [
+                    ...prev
+                ];
+            })
+            setModal( prev => {
+                return {
+                    ...prev,
+                    show : false,
+                }
+            })
             return;
         }
         const data = {
@@ -89,7 +131,6 @@ export const FormNote = ({data = initForm}) => {
                 const allTags = [...form.tags,...prev];
                 const arrayUniqueById = [...new Map(allTags.map(item =>
                                         [item.id, item])).values()];
-                console.log(arrayUniqueById);
                 return arrayUniqueById;
             })
         }
@@ -112,7 +153,6 @@ export const FormNote = ({data = initForm}) => {
                                 key={ind}
                             >
                                 {tag.name}
-                                {console.log(tag)}
                                 <span className='tag-remove' onClick={() => handleRemoveTag(tag)}>
                                     x
                                 </span>
@@ -135,7 +175,7 @@ export const FormNote = ({data = initForm}) => {
                     <div className='p-2'>All tags</div>
                     <div className='tags-list'>
                         {tags
-                        .filter( tag => !form.tags.includes(tag.name) && ((!!form.search && tag.name.toUpperCase().includes(form.search.toUpperCase())) || !form.search))
+                        .filter( tag => !form.tags.map(t => t.name).includes(tag.name) && ((!!form.search && tag.name.toUpperCase().includes(form.search.toUpperCase())) || !form.search))
                         .slice(0,8)
                         .map((tag,ind) => <span className='p-2 tag-list-item' key={ind} onClick={() => handleChange("tags",tag)}>{tag.name}</span>)}
                         {!!form.search && <span className='p-2 tag-list-item' onClick={() => handleChange("tags",{name : form.search})}>{form.search} (New tag)</span>}
