@@ -19,6 +19,9 @@ a {
   color: inherit;
   text-decoration: none;
 }
+.cursor{
+  cursor: pointer;
+}
 .notes-container{
   max-height: calc(100vh - 300px);
   overflow: auto;

@@ -122,10 +122,6 @@ export const FormNote = ({data = initForm}) => {
         const response = await httpClient.post("api/v1/notes",data);
         if(response.status){
             setNotes( prev => {
-                console.log([
-                    response.data,
-                    ...prev,
-                ]);
                 return [
                     response.data,
                     ...prev,

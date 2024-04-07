@@ -21,7 +21,6 @@ const request = async (
     const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/${endpoint}`,options)
     .then(resp => resp.json())
     .catch(err => {
-        console.log(err);
         return err.message;
     })
 
