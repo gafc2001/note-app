@@ -1,8 +1,8 @@
 'use client';
 import { useState } from "react";
 import { ModalApp } from "./ModalApp";
-import { AppContext, AppProvider } from "../context/AppContext";
-import { ListNotes } from "./ListNotes";
+import { AppContext } from "../context/AppContext";
+import { TabNotes } from "./TabNotes";
 
 export const Notes = ({serverData}) => {
    
@@ -24,7 +24,7 @@ export const Notes = ({serverData}) => {
             setTags,
         }}>
             <div className="d-flex justify-content-center p-3">
-                <ListNotes/>
+                <TabNotes/>
 
                 <ModalApp
                     title={modal.title}

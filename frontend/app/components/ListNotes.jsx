@@ -1,53 +1,38 @@
-import {Tabs,Tab} from 'react-bootstrap';
-import { Note } from './Note';
+import { useContext, useState } from "react"
+import { AppContext } from "../context/AppContext"
+import { Note } from "./Note";
+import { Badge} from 'react-bootstrap';
 
-import styles from '../page.module.css';
-import { useContext } from 'react';
-import { AppContext } from '../context/AppContext';
-import { FormNote } from './FormNote';
+export const ListNotes = ({active}) => {
 
-export const ListNotes = () => {
- 
-    const {notes,setModal} = useContext(AppContext);
+    const {tags,notes} = useContext(AppContext);
+    const [filters,setFilters] = useState(tags.map( t => t.id));
 
-    const handleClickOpenForm = () => {
-        setModal({
-            title : "Create note",
-            body : <FormNote/>,
-            show : true,
-        })
-
+    const handleFilterClick = (tag) => {
+        const filterActive = filters.includes(tag.id);
+        if(filterActive){
+            return setFilters( filters.filter( id => id !== tag.id));
+        }
+        setFilters([
+            ...filters,
+            tag.id
+        ])
     }
 
-    return (
-        <div className={styles["main-container"]}>
-            <Tabs
-                defaultActiveKey="notes"
-                id="uncontrolled-tab-example"
-                className="mb-3"
-            >
-                <Tab eventKey="notes" title="Notes">
-                    <div className='p-4'>
-                        {notes
-                            .filter( n => n.isActive)
-                            .map((note,ind) => 
-                            <Note note={note} key={ind}/>
-                        )}
-                    </div>
-                </Tab>
-                <Tab eventKey="archive_notes" title="Archive">
-                    <div className='p-4'>
-                        {notes
-                            .filter( n => !n.isActive)
-                            .map((note,ind) => 
-                            <Note note={note} key={ind}/>
-                        )}
-                    </div>
-                </Tab>
-            </Tabs>
-            
-            <span className={styles["btn-add"]} onClick={handleClickOpenForm}>+</span>
+    return(
+        <div>
+            <div className='px-4 d-flex gap-1'>
+                {tags.map( (tag,ind) => 
+                    <Badge key={ind} bg={filters.includes(tag.id)?"primary":"secondary"} onClick={() => handleFilterClick(tag)}>{tag.name}</Badge>   
+                )}
+            </div>
+            <div className='p-4'>
+                {notes
+                    .filter( n => n.isActive === active && filters.some( f => n.tags.map(t => t.id).includes(f)))
+                    .map((note,ind) => 
+                    <Note note={note} key={ind}/>
+                )}
+            </div>
         </div>
     )
-
 }
