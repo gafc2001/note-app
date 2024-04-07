@@ -67,3 +67,20 @@ a {
   min-height: 70px;
   padding: 10px;
 }
+.note-options{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.dropdown-toggle.show,
+.dropdown-toggle:active{
+  border: 0;
+}
+.dropdown-toggle{
+  --size : 20px;
+  height: var(--size);
+  width: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

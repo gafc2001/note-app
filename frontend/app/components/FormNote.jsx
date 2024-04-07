@@ -29,13 +29,15 @@ const tags = [
         name : "Random"
     },
 ]
-export const FormNote = ({afterSend}) => {
+const initForm = {
+    text : "",
+    search : "",
+    tags : [],
+}
+export const FormNote = ({afterSend,data = initForm}) => {
  
-    const [form,setForm] = useState({
-        text : "",
-        search : "",
-        tags : [],
-    })
+
+    const [form,setForm] = useState(data)
     const [validated,setValidated] = useState(false);
     const [tagsListOpen,setTagsListOpen] = useState(false);
 
@@ -86,7 +88,7 @@ export const FormNote = ({afterSend}) => {
         <Row>
             <Col xs="12" className='mb-2'>
                 <Form.Label>Note</Form.Label>
-                <Form.Control as="textarea" onChange={ e => handleChange("text",e.target.value)} required/>
+                <Form.Control as="textarea" onChange={ e => handleChange("text",e.target.value)} required value={form.text}/>
             </Col>
             <Col xs="12" className='mb-2 position-relative'>
                 <Form.Label>Tags</Form.Label>

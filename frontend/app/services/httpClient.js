@@ -32,4 +32,6 @@ const request = async (
 export const httpClient = {
     post : async (endpoint,data = {}) => await request(endpoint,"POST",data),
     get : async (endpoint,data = {}) => await request(endpoint,"GET",data),
+    delete : async (endpoint,data = {}) => await request(endpoint,"POST",data),
+    put : async (endpoint,data = {}) => await request(endpoint,"PUT",data),
 }

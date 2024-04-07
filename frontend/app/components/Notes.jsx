@@ -1,9 +1,10 @@
 'use client';
 import { useState } from "react";
 import { FormNote } from "./FormNote";
-import {Row,Col} from 'react-bootstrap';
+import { Note } from "./Note";
 import styles from '../page.module.css';
 import { ModalApp } from "./ModalApp";
+import { Tabs, Tab} from 'react-bootstrap';
 export async function getServerSideProps(){ 
     const response = getNotes();
     return {
@@ -24,7 +25,6 @@ export const Notes = ({serverData}) => {
     }
 
     const handleCloseModal = (newNote) => {
-        console.log(newNote);
         setData([
             newNote,
             ...data,
@@ -35,13 +35,31 @@ export const Notes = ({serverData}) => {
         <div className="d-flex justify-content-center p-3">
             
             <div className={styles["main-container"]}>
-                <div className='p-4'>
-                    {data.map((note,ind) => 
-                        <div className='note-item mb-2' style={{backgroundColor : note.color}} key={ind}>
-                            {note.text}
+                <Tabs
+                    defaultActiveKey="notes"
+                    id="uncontrolled-tab-example"
+                    className="mb-3"
+                >
+                    <Tab eventKey="notes" title="Notes">
+                        <div className='p-4'>
+                            {data
+                                .filter( n => n.isActive)
+                                .map((note,ind) => 
+                                <Note note={note} key={ind} afterSend={handleCloseModal} setData={setData}/>
+                            )}
                         </div>
-                    )}
-                </div>
+                    </Tab>
+                    <Tab eventKey="archive_notes" title="Archive">
+                        <div className='p-4'>
+                            {data
+                                .filter( n => !n.isActive)
+                                .map((note,ind) => 
+                                <Note note={note} key={ind} afterSend={handleCloseModal} setData={setData}/>
+                            )}
+                        </div>
+                    </Tab>
+                </Tabs>
+                
                 <span className={styles["btn-add"]} onClick={handleClickOpenForm}>+</span>
             </div>
 
