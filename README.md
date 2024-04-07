@@ -2,20 +2,15 @@
 
 The project is deployed in my personal ubuntu server
 - Links: 
-    - [Frontend](frontend)
-    - [Backend](backend)
+    - Frontend https://notes.devgustavo.com
+    - Backend https://notes-api.devgustavo.com
 
-hola [Backend][backend]
-
-[https://notes.devgustavo.com]: frontend
-[https://notes-api.devgustavo.com]: backend
-
-### Requirements Frontend
+### Frontend requirements 
 - npm v9.8.1
 - node v18.18.0
 - Next js v14.1.4
 
-### Requirement Backend
+### Backend requirement
 - Database MysqL v8.*
 - Java 21
 - Spring Boot v3.2.4
@@ -28,7 +23,7 @@ Run the file run.sh
 ## Run the project manually
 
 ### Run Frontend, go to folder 'frontend'
-Create a .env.local file and and type:
+Create a .env.local file and type:
 
 ~~~
 NEXT_PUBLIC_URL="http://localhost:8080"
@@ -39,7 +34,7 @@ npm install
 npm run dev
 ~~~
 
-> Run Backend,first of all, edit the application.properties acording to your local settings.\
+> Run Backend, first of all, edit the application.properties acording to your local settings.\
 Then run the following commands
 
 
