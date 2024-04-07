@@ -68,7 +68,7 @@ a {
   padding: 10px;
 }
 .note-options{
-  position: absolute;
+  position: absolute!important;
   right: 10px;
   top: 10px;
 }

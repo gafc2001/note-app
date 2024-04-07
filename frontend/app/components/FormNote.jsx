@@ -1,43 +1,18 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {Form,Row,Col,Button} from 'react-bootstrap';
 import { httpClient } from '../services/httpClient';
 
-const tags = [
-    {
-        id : 1,
-        name : "Tag 1"
-    },
-    {
-        id : 2,
-        name : "Tag 2"
-    },
-    {
-        id : 3,
-        name : "Tag 3"
-    },
-    {
-        id : 4,
-        name : "Tag 4"
-    },
-    {
-        id : 5,
-        name : "Tag 5"
-    },
-    {
-        id : 6,
-        name : "Random"
-    },
-]
+
 const initForm = {
     text : "",
     search : "",
     tags : [],
 }
-export const FormNote = ({afterSend,data = initForm}) => {
+export const FormNote = ({afterSend,data = initForm,tags}) => {
  
-
-    const [form,setForm] = useState(data)
+    console.log(data);
+    const [form,setForm] = useState(data);
     const [validated,setValidated] = useState(false);
     const [tagsListOpen,setTagsListOpen] = useState(false);
 
@@ -55,12 +30,17 @@ export const FormNote = ({afterSend,data = initForm}) => {
 
     const handleOpenListTags = () => setTagsListOpen(true);
     const handleCloseListTags = () => {
+        
+        setTimeout(() => {
+            setTagsListOpen(false)
+        },[200])
+    }
+    useEffect(() => {
         setForm({
             ...form,
             search : "",
         })
-        setTimeout(() => setTagsListOpen(false),[100])
-    }
+    },[form.tags])
 
     const handleRemoveTag = (tag) => {
         setForm({
@@ -74,12 +54,15 @@ export const FormNote = ({afterSend,data = initForm}) => {
         e.stopPropagation();
         setValidated(true);
         if (e.target.checkValidity() === false) {
-            return
+            return;
         }
+        // return console.log(form);
         const response = await httpClient.post("api/v1/notes",form);
-        console.log(response);
         if(response.status){
-            afterSend(response.data);
+            afterSend({
+                ...response.data,
+                tags : response.data.tags.map( t => t.name),
+            });
         }
     }
 
@@ -94,38 +77,38 @@ export const FormNote = ({afterSend,data = initForm}) => {
                 <Form.Label>Tags</Form.Label>
                 <div className='form-control d-flex gap-1'>
                     <div className='d-flex flex-wrap gap-1'>
-                    {form.tags.map( (tag,ind) => 
-                        <span 
-                            className="tag-note" 
-                            key={ind}
-                        >
-                            {tag}
-                            <span className='tag-remove' onClick={() => handleRemoveTag(tag)}>
-                                x
+                        {form.tags.map( (tag,ind) => 
+                            <span 
+                                className="tag-note" 
+                                key={ind}
+                            >
+                                {tag}
+                                <span className='tag-remove' onClick={() => handleRemoveTag(tag)}>
+                                    x
+                                </span>
                             </span>
-                        </span>
-                    )}
+                        )}
+                        <input 
+                            type="text" 
+                            className='form-input' 
+                            placeholder={form.tags.length === 0 ? "Select tags" : ""} 
+                            onChange={(e) => handleChange("search",e.target.value)} 
+                            onFocus={handleOpenListTags} 
+                            onBlur={handleCloseListTags}
+                            value={form.search}
+                        />
                     </div>
-                    <input 
-                        type="text" 
-                        className='form-input' 
-                        placeholder={form.tags.length === 0 ? "Select tags" : ""} 
-                        onChange={(e) => handleChange("search",e.target.value)} 
-                        onFocus={handleOpenListTags} 
-                        onBlur={handleCloseListTags}
-                        value={form.search}
-                    />
                 </div>
 
                 {tagsListOpen && 
                 <div className='tags-list-container shadow py-3'>
                     <div className='p-2'>All tags</div>
                     <div className='tags-list'>
-                        {tags.filter( t => 
-                            !form.tags.includes(t.name) && ((!!form.search && t.name.toUpperCase().includes(form.search.toUpperCase())) || !form.search)
-                        ).map( (tag,ind) => 
-                            <span className='p-2 tag-list-item' key={ind} onClick={() => handleChange("tags",tag.name)}>{tag.name}</span>
-                        )}
+                        {tags
+                        .filter( tag => !form.tags.includes(tag) && ((!!form.search && tag.toUpperCase().includes(form.search.toUpperCase())) || !form.search))
+                        .slice(0,5)
+                        .map((tag,ind) => <span className='p-2 tag-list-item' key={ind} onClick={() => handleChange("tags",tag)}>{tag}</span>)}
+                        {!!form.search && <span className='p-2 tag-list-item' onClick={() => handleChange("tags",form.search)}>{form.search} (New tag)</span>}
                     </div>
                 </div>
                 }

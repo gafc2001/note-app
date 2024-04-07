@@ -4,16 +4,11 @@ import { FormNote } from './FormNote';
 import { useState } from 'react';
 import { httpClient } from '../services/httpClient';
 import { archiveNoteById, deleteNoteById } from '../services/notes';
-export const Note = ({note,afterSend,setData}) => {
-
+export const Note = ({note,afterSend,setData,tags}) => {
     const [isOpen,setIsOpen] = useState(false);
 
-
-    const handleClickOpenForm = () => {
-        setIsOpen(true);
-    }
-
     const handleEdit = () => {
+        console.log(tags);
         setIsOpen(true);
     }
     const handleArchive = async (id) => {
@@ -53,7 +48,7 @@ export const Note = ({note,afterSend,setData}) => {
             </div>
             <ModalApp
                 title="Create note"
-                body={<FormNote afterSend={afterSend} data={note}/>}
+                body={<FormNote afterSend={afterSend} data={note} tags={tags}/>}
                 show={isOpen}
                 setShow={setIsOpen}
             />

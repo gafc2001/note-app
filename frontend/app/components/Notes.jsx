@@ -5,18 +5,18 @@ import { Note } from "./Note";
 import styles from '../page.module.css';
 import { ModalApp } from "./ModalApp";
 import { Tabs, Tab} from 'react-bootstrap';
-export async function getServerSideProps(){ 
-    const response = getNotes();
-    return {
-      props : {
-        serverData : response
-      }
-    }
-}
+// export async function getServerSideProps(){ 
+//     const response = getNotes();
+//     return {
+//       props : {
+//         serverData : response
+//       }
+//     }
+// }
 export const Notes = ({serverData}) => {
 
     
-    const [data,setData] = useState(serverData || [])
+    const [data,setData] = useState(serverData.notes || [])
     const [isOpen,setIsOpen] = useState(false);
 
 
@@ -54,7 +54,7 @@ export const Notes = ({serverData}) => {
                             {data
                                 .filter( n => !n.isActive)
                                 .map((note,ind) => 
-                                <Note note={note} key={ind} afterSend={handleCloseModal} setData={setData}/>
+                                <Note note={note} key={ind} afterSend={handleCloseModal} setData={setData} tags={tags}/>
                             )}
                         </div>
                     </Tab>
@@ -65,7 +65,7 @@ export const Notes = ({serverData}) => {
 
             <ModalApp
                 title="Create note"
-                body={<FormNote afterSend={handleCloseModal}/>}
+                body={<FormNote afterSend={handleCloseModal} tags={serverData.tags}/>}
                 show={isOpen}
                 setShow={setIsOpen}
             />
