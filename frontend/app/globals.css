@@ -1,0 +1,92 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  /* color: rgb(var(--foreground-rgb)); */
+  background-color: #f4f6f9;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.cursor{
+  cursor: pointer;
+}
+.notes-container{
+  max-height: calc(100vh - 300px);
+  overflow: auto;
+}
+.tags-container{
+  min-height: 30px;
+}
+.tags-list-container{
+  position: absolute;
+  z-index: 99;
+  width: 95%;
+  background-color: white;
+}
+.tags-list{
+  max-height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.tag-list-item{
+  cursor: pointer;
+}
+.tag-list-item:hover{
+  background-color: rgb(234, 234, 234);
+}
+.tag-note{
+  background-color: rgb(209, 209, 209);
+  border-radius: 5px;
+  padding: 2px 5px;
+  font-weight: 300;
+  font-size: 12px;
+}
+.form-input{
+  border: unset;
+  outline: unset;
+  font-size: 14px;
+}
+.form-input:focus{
+  border: unset;
+  outline: unset;
+}
+.tag-remove{
+  margin-left: 5px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.note-item{
+  min-height: 70px;
+  padding: 10px;
+}
+.note-options{
+  position: absolute!important;
+  right: 10px;
+  top: 10px;
+}
+.dropdown-toggle.show,
+.dropdown-toggle:active{
+  border: 0;
+}
+.dropdown-toggle{
+  --size : 20px;
+  height: var(--size);
+  width: var(--size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
