@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { AppContext } from "../context/AppContext"
 import { Note } from "./Note";
 import { Badge} from 'react-bootstrap';
@@ -19,14 +19,18 @@ export const ListNotes = ({active}) => {
         ])
     }
 
+    useEffect(() => {
+        setFilters( tags.map( t => t.id))
+    },[tags])
+
     return(
         <div>
-            <div className='px-4 d-flex gap-1'>
+            <div className='px-4 d-flex gap-1 flex-wrap py-1'>
                 {tags.map( (tag,ind) => 
                     <Badge key={ind} bg={filters.includes(tag.id)?"primary":"secondary"} onClick={() => handleFilterClick(tag)}>{tag.name}</Badge>   
                 )}
             </div>
-            <div className='p-4'>
+            <div className='p-4 notes-container'>
                 {notes
                     .filter( n => n.isActive === active && filters.some( f => n.tags.map(t => t.id).includes(f)))
                     .map((note,ind) => 

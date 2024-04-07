@@ -18,9 +18,17 @@ export const FormNote = ({data = initForm}) => {
     const [validated,setValidated] = useState(false);
     const [tagsListOpen,setTagsListOpen] = useState(false);
 
-    const {tags,setModal,setNotes,setTags,notes} = useContext(AppContext);
+    const {tags,setModal,setNotes,setTags} = useContext(AppContext);
 
+    const updateTags = () => {
+        setTags( prev => {
+            const allTags = [...form.tags,...prev];
+            const tagsUniqueById = [...new Map(allTags.map(item =>
+                                    [item.name, item])).values()];
 
+            return tagsUniqueById;
+        })
+    }
     const addTag = async (tag) => {
         if(!!form.id){
             await addTagService(form.id,tag);
@@ -32,6 +40,7 @@ export const FormNote = ({data = initForm}) => {
                 ]
                 return [...prev];
             })
+            updateTags();
         }
     }
     const handleChange = (name,value)=> {
@@ -63,9 +72,6 @@ export const FormNote = ({data = initForm}) => {
             search : "",
         })
     },[form.tags])
-    useEffect(() => {
-        console.log(notes[0]);
-    },[notes])
 
     const handleRemoveTag = async (tag) => {
         if(!!form.id){
@@ -116,6 +122,10 @@ export const FormNote = ({data = initForm}) => {
         const response = await httpClient.post("api/v1/notes",data);
         if(response.status){
             setNotes( prev => {
+                console.log([
+                    response.data,
+                    ...prev,
+                ]);
                 return [
                     response.data,
                     ...prev,
@@ -127,12 +137,7 @@ export const FormNote = ({data = initForm}) => {
                     show : false,
                 }
             })
-            setTags( prev => {
-                const allTags = [...form.tags,...prev];
-                const arrayUniqueById = [...new Map(allTags.map(item =>
-                                        [item.id, item])).values()];
-                return arrayUniqueById;
-            })
+            updateTags();
         }
     }
 
