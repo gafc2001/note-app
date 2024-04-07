@@ -1,7 +1,10 @@
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {Form,Row,Col,Button} from 'react-bootstrap';
 import { httpClient } from '../services/httpClient';
+import { useRouter } from 'next/router';
+import { deleteNoteTag } from '../services/notes';
+import { AppContext } from '../context/AppContext';
 
 
 const initForm = {
@@ -9,16 +12,20 @@ const initForm = {
     search : "",
     tags : [],
 }
-export const FormNote = ({afterSend,data = initForm,tags}) => {
+export const FormNote = ({data = initForm}) => {
  
-    console.log(data);
     const [form,setForm] = useState(data);
     const [validated,setValidated] = useState(false);
     const [tagsListOpen,setTagsListOpen] = useState(false);
 
+    const {tags,setModal,setNotes,setTags} = useContext(AppContext);
+
     const handleChange = (name,value)=> {
         if(name === "tags"){
-            value = [...form.tags,value];
+            value = [
+                ...form.tags,
+                value,
+            ];
         }
         setForm({
             ...form,
@@ -42,11 +49,15 @@ export const FormNote = ({afterSend,data = initForm,tags}) => {
         })
     },[form.tags])
 
-    const handleRemoveTag = (tag) => {
+    const handleRemoveTag = async (tag) => {
+        if(!!form.id){
+            const response = deleteNoteTag();
+        }
         setForm({
             ...form,
-            tags : form.tags.filter( tagI => tag !== tagI)
+            tags : form.tags.filter( tagI => tag.name !== tagI.name)
         })
+        
     }
 
     const handleSubmit = async e => {
@@ -56,13 +67,31 @@ export const FormNote = ({afterSend,data = initForm,tags}) => {
         if (e.target.checkValidity() === false) {
             return;
         }
-        // return console.log(form);
-        const response = await httpClient.post("api/v1/notes",form);
+        const data = {
+            ...form,
+            tags : form.tags.map( t => t.name),
+        }
+        const response = await httpClient.post("api/v1/notes",data);
         if(response.status){
-            afterSend({
-                ...response.data,
-                tags : response.data.tags.map( t => t.name),
-            });
+            setNotes( prev => {
+                return [
+                    response.data,
+                    ...prev,
+                ]
+            })
+            setModal( prev => {
+                return {
+                    ...prev,
+                    show : false,
+                }
+            })
+            setTags( prev => {
+                const allTags = [...form.tags,...prev];
+                const arrayUniqueById = [...new Map(allTags.map(item =>
+                                        [item.id, item])).values()];
+                console.log(arrayUniqueById);
+                return arrayUniqueById;
+            })
         }
     }
 
@@ -82,7 +111,8 @@ export const FormNote = ({afterSend,data = initForm,tags}) => {
                                 className="tag-note" 
                                 key={ind}
                             >
-                                {tag}
+                                {tag.name}
+                                {console.log(tag)}
                                 <span className='tag-remove' onClick={() => handleRemoveTag(tag)}>
                                     x
                                 </span>
@@ -105,10 +135,10 @@ export const FormNote = ({afterSend,data = initForm,tags}) => {
                     <div className='p-2'>All tags</div>
                     <div className='tags-list'>
                         {tags
-                        .filter( tag => !form.tags.includes(tag) && ((!!form.search && tag.toUpperCase().includes(form.search.toUpperCase())) || !form.search))
-                        .slice(0,5)
-                        .map((tag,ind) => <span className='p-2 tag-list-item' key={ind} onClick={() => handleChange("tags",tag)}>{tag}</span>)}
-                        {!!form.search && <span className='p-2 tag-list-item' onClick={() => handleChange("tags",form.search)}>{form.search} (New tag)</span>}
+                        .filter( tag => !form.tags.includes(tag.name) && ((!!form.search && tag.name.toUpperCase().includes(form.search.toUpperCase())) || !form.search))
+                        .slice(0,8)
+                        .map((tag,ind) => <span className='p-2 tag-list-item' key={ind} onClick={() => handleChange("tags",tag)}>{tag.name}</span>)}
+                        {!!form.search && <span className='p-2 tag-list-item' onClick={() => handleChange("tags",{name : form.search})}>{form.search} (New tag)</span>}
                     </div>
                 </div>
                 }

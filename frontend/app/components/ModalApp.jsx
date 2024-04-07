@@ -1,16 +1,25 @@
+import { useContext } from 'react';
 import {Modal,Button} from 'react-bootstrap';
+import { AppContext } from '../context/AppContext';
 
 export const ModalApp = ({
     title,
     body,
-    footer,
     show,
-    setShow,
 }) => {
     
+    const {setModal} = useContext(AppContext);
+
+
     const handleClose = () => {
-        setShow(false)
+        setModal( prev => {
+            return {
+                ...prev,
+                show : false,
+            }
+        })
     }
+
 
     return(
         <Modal show={show} onHide={handleClose}>

@@ -22,12 +22,12 @@ export default async function Home() {
   return (
     <main>
       <h1 className="text-center">App Notes</h1>
-      <Notes 
-        serverData={{
-          notes,
-          tags
-        }}
-      />
+        <Notes 
+          serverData={{
+            notes,
+            tags
+          }}
+        />
     </main>
   );
 }

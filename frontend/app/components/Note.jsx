@@ -1,19 +1,22 @@
 import {Dropdown,DropdownButton} from 'react-bootstrap';
-import { ModalApp } from './ModalApp';
 import { FormNote } from './FormNote';
-import { useState } from 'react';
-import { httpClient } from '../services/httpClient';
+import { useContext, useState } from 'react';
 import { archiveNoteById, deleteNoteById } from '../services/notes';
-export const Note = ({note,afterSend,setData,tags}) => {
-    const [isOpen,setIsOpen] = useState(false);
+import { AppContext } from '../context/AppContext';
+export const Note = ({note}) => {
+
+    const {setModal,setNotes} = useContext(AppContext);
 
     const handleEdit = () => {
-        console.log(tags);
-        setIsOpen(true);
+        setModal({
+            title : "Edit note",
+            body : <FormNote data={note}/>,
+            show : true
+        })
     }
     const handleArchive = async (id) => {
         await archiveNoteById(id);
-        setData(prev => {
+        setNotes(prev => {
             const index = prev.findIndex( n => n.id === id);
             prev[index] = {
                 ...prev[index],
@@ -27,7 +30,7 @@ export const Note = ({note,afterSend,setData,tags}) => {
     }
     const handleDelete = async (id) => {
         await deleteNoteById(id);
-        setData(prev => {
+        setNotes(prev => {
             return prev.filter( n => n.id !== id)
         })
     }
@@ -46,12 +49,6 @@ export const Note = ({note,afterSend,setData,tags}) => {
                 </DropdownButton>
                 {note.text}
             </div>
-            <ModalApp
-                title="Create note"
-                body={<FormNote afterSend={afterSend} data={note} tags={tags}/>}
-                show={isOpen}
-                setShow={setIsOpen}
-            />
         </div>
     )
 }
